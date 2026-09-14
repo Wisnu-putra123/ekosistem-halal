@@ -1,0 +1,76 @@
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: halal_lms_app
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - mysql
+    networks:
+      - halal_lms
+    ports:
+      - "8000:8000"
+    command: php artisan serve --host=0.0.0.0 --port=8000
+
+  mysql:
+    image: mysql:8.4
+    container_name: halal_lms_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: halal_lms
+      MYSQL_USER: halal_lms
+      MYSQL_PASSWORD: halal_password
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - halal_lms
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: halal_lms_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    depends_on:
+      - mysql
+    ports:
+      - "8080:80"
+    networks:
+      - halal_lms
+
+  # node:
+  #   image: node:22-alpine
+  #   container_name: halal_lms_node
+  #   working_dir: /var/www
+  #   volumes:
+  #     - ./:/var/www
+  #   ports:
+  #     - "5173:5173"
+  #   networks:
+  #     - halal_lms
+
+  node:
+    image: node:22-alpine
+    container_name: halal_lms_node
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    ports:
+      - "5173:5173"
+    command: npm run dev -- --host 0.0.0.0
+    networks:
+      - halal_lms
+      
+networks:
+  halal_lms:
+
+volumes:
+  mysql_data:
