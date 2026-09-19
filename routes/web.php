@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect root to home
@@ -21,10 +22,6 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
 
-    // Admin Login Khusus
-    Route::get('/admin/login', [AuthController::class, 'showAdminLoginForm'])->name('admin.login');
-    Route::post('/admin/login', [AuthController::class, 'adminLogin']);
-
     // User Registration
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
@@ -32,6 +29,7 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated Routes
 Route::middleware('auth')->group(function () {
+
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -39,6 +37,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Admin Protected User Management (CRUD)
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
@@ -49,6 +49,14 @@ Route::middleware('auth')->group(function () {
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    });
+
+    Route::middleware('student')->prefix('student')->name('student.')->group(function () {
+        
+    });
+
+    Route::middleware('teacher')->prefix('teacher')->name('teacher.')->group(function () {
+        
     });
 });
 
