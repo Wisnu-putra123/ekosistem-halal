@@ -1,77 +1,65 @@
-@extends('layouts.app')
-
-@section('title', 'Beranda - Ekosistem Halal')
-
-@section('content')
-<div class="row justify-content-center">
-    <div class="col-md-10">
-        <div class="card card-custom p-4 mb-4 bg-white">
-            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-3 border-bottom">
-                <div>
-                    <h3 class="fw-bold mb-1">Selamat Datang di Ekosistem Halal!</h3>
-                    <p class="text-muted mb-0">Platform Pembelajaran & Manajemen Ekosistem Halal</p>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ekosistem Halal</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-2">
+                    <span class="text-2xl font-bold text-emerald-600">Ekosistem Halal</span>
                 </div>
-                <div>
+                <div class="flex items-center space-x-4">
                     @auth
-                        @if(Auth::user()->role === 'admin')
-                            <span class="badge badge-admin fs-6 px-3 py-2"><i class="bi bi-shield-fill-check me-1"></i> Role: Admin</span>
-                        @elseif(Auth::user()->role === 'teacher')
-                            <span class="badge badge-teacher fs-6 px-3 py-2"><i class="bi bi-person-badge-fill me-1"></i> Role: Teacher (Guru)</span>
-                        @else
-                            <span class="badge badge-student fs-6 px-3 py-2"><i class="bi bi-mortarboard-fill me-1"></i> Role: Student (Siswa)</span>
+                        <a href="{{ route('home') }}" class="text-gray-700 hover:text-emerald-600 font-medium px-3 py-2">Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}" class="text-gray-700 hover:text-emerald-600 font-medium px-3 py-2">Masuk</a>
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg transition">Daftar</a>
                         @endif
                     @endauth
                 </div>
             </div>
+        </div>
+    </nav>
 
-            <div class="mt-4">
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-emerald-50 via-white to-gray-50 py-20 lg:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl sm:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight mb-6">
+                Platform Terintegrasi <br class="hidden sm:inline" />
+                <span class="text-emerald-600">Ekosistem Halal</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+                Layanan digital terpadu untuk pendampingan, pencatatan, dan pengelolaan sertifikasi halal secara cepat, transparan, dan terpercaya.
+            </p>
+            <div class="flex justify-center items-center space-x-4">
                 @auth
-                    <div class="alert alert-light border d-flex align-items-center justify-content-between flex-wrap gap-3 p-3 rounded-3 mb-4">
-                        <div class="d-flex align-items-center gap-3">
-                            <i class="bi bi-person-circle fs-1 text-primary"></i>
-                            <div>
-                                <h5 class="fw-bold mb-1">{{ Auth::user()->name }}</h5>
-                                <div class="text-muted small">Email: <strong>{{ Auth::user()->email }}</strong> | Terdaftar sejak: {{ Auth::user()->created_at->format('d M Y') }}</div>
-                            </div>
-                        </div>
-                        <a href="{{ route('profile.edit') }}" class="btn btn-outline-primary btn-sm px-3">
-                            <i class="bi bi-person-gear me-1"></i> Edit Profil & Password
-                        </a>
-                    </div>
-
-                    @if(Auth::user()->isAdmin())
-                        <div class="p-4 bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded-3 mb-4">
-                            <h5 class="fw-bold text-danger"><i class="bi bi-shield-lock me-2"></i>Akses Administrator Dideteksi</h5>
-                            <p class="mb-3 text-muted">Anda masuk sebagai Admin. Anda dapat mengelola data seluruh pengguna dan mengubah role siswa ke guru di Panel Admin.</p>
-                            <a href="{{ route('admin.users.index') }}" class="btn btn-danger">
-                                <i class="bi bi-speedometer2 me-1"></i> Buka Panel Pengelolaan User Admin
-                            </a>
-                        </div>
-                    @elseif(Auth::user()->isTeacher())
-                        <div class="p-4 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-3 mb-4">
-                            <h5 class="fw-bold text-dark"><i class="bi bi-person-video3 me-2"></i>Status Pengajar (Teacher)</h5>
-                            <p class="mb-0 text-muted">Akun Anda telah di-upgrade menjadi Pengajar/Guru. Anda dapat membuat materi dan mengajar di ekosistem halal LMS.</p>
-                        </div>
-                    @else
-                        <div class="p-4 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-3 mb-4">
-                            <h5 class="fw-bold text-primary"><i class="bi bi-book me-2"></i>Status Pelajar (Student)</h5>
-                            <p class="mb-0 text-muted">Role Anda secara default adalah <strong>Student</strong>. Jika Anda memerlukan hak akses Pengajar (Teacher), silakan hubungi Administrator untuk mengubah role Anda.</p>
-                        </div>
-                    @endif
+                    <a href="{{ route('home') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-lg font-semibold text-lg shadow-md transition">
+                        Masuk ke Dashboard
+                    </a>
                 @else
-                    <div class="text-center py-5">
-                        <i class="bi bi-box-arrow-in-right text-muted" style="font-size: 4rem;"></i>
-                        <h4 class="mt-3 fw-bold">Anda Belum Masuk</h4>
-                        <p class="text-muted">Silakan registrasi atau masuk terlebih dahulu untuk mengakses fitur lengkap.</p>
-                        <div class="d-flex justify-content-center gap-2 mt-3">
-                            <a href="{{ route('login') }}" class="btn btn-outline-primary px-4 py-2">Login Pengguna</a>
-                            <a href="{{ route('register') }}" class="btn btn-primary px-4 py-2">Daftar Akun Baru</a>
-                            <a href="{{ route('admin.login') }}" class="btn btn-outline-danger px-4 py-2">Login Admin</a>
-                        </div>
-                    </div>
+                    <a href="{{ route('login') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-lg font-semibold text-lg shadow-md transition">
+                        Mulai Sekarang
+                    </a>
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-8 py-3 rounded-lg font-semibold text-lg shadow-sm transition">
+                            Buat Akun
+                        </a>
+                    @endif
                 @endauth
             </div>
         </div>
-    </div>
-</div>
-@endsection
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-6 text-center text-gray-500 text-sm">
+        &copy; {{ date('Y') }} Ekosistem Halal. All rights reserved.
+    </footer>
+</body>
+</html>

@@ -15,9 +15,15 @@ class AuthController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return Auth::user()->isAdmin()
-                ? redirect()->route('admin.users.index')
-                : redirect()->route('home');
+            $user = Auth::user();
+
+            if ($user->role === 'admin') {
+                return view('admin.index');
+            } elseif ($user->role === 'teacher') {
+                return view('teacher.index');
+            } else {
+                return view('student.index');
+            }
         }
 
         return view('auth.login');
@@ -44,70 +50,19 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
-            if ($user->isAdmin()) {
-                return redirect()->intended(route('admin.users.index'))
-                    ->with('success', 'Selamat datang kembali, Administrator!');
-            }
+            session()->flash('success', 'Berhasil masuk! Selamat datang, ' . $user->name);
 
-            return redirect()->intended(route('home'))
-                ->with('success', 'Berhasil masuk! Selamat datang, ' . $user->name);
+            if ($user->role === 'admin') {
+                return view('admin.index');
+            } elseif ($user->role === 'teacher') {
+                return view('teacher.index');
+            } else {
+                return view('student.index');
+            }
         }
 
         return back()->withErrors([
             'email' => 'Email atau kata sandi yang Anda masukkan salah.',
-        ])->onlyInput('email');
-    }
-
-    /**
-     * Tampilkan halaman login khusus Admin.
-     */
-    public function showAdminLoginForm()
-    {
-        if (Auth::check()) {
-            if (Auth::user()->isAdmin()) {
-                return redirect()->route('admin.users.index');
-            }
-            return redirect()->route('home')->with('error', 'Anda sudah login sebagai pengguna biasa.');
-        }
-
-        return view('auth.admin-login');
-    }
-
-    /**
-     * Proses autentikasi khusus Admin.
-     */
-    public function adminLogin(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ], [
-            'email.required' => 'Email admin wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'password.required' => 'Kata sandi wajib diisi.',
-        ]);
-
-        if (Auth::attempt($credentials, $request->has('remember'))) {
-            $user = Auth::user();
-
-            if ($user->role !== 'admin') {
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                return back()->withErrors([
-                    'email' => 'Akun ini tidak memiliki hak akses administrator.',
-                ])->onlyInput('email');
-            }
-
-            $request->session()->regenerate();
-
-            return redirect()->intended(route('admin.users.index'))
-                ->with('success', 'Login Admin Berhasil! Selamat datang di Panel Administrator.');
-        }
-
-        return back()->withErrors([
-            'email' => 'Email atau kata sandi administrator salah.',
         ])->onlyInput('email');
     }
 
@@ -117,7 +72,15 @@ class AuthController extends Controller
     public function showRegisterForm()
     {
         if (Auth::check()) {
-            return redirect()->route('home');
+            $user = Auth::user();
+
+            if ($user->role === 'admin') {
+                return view('admin.index');
+            } elseif ($user->role === 'teacher') {
+                return view('teacher.index');
+            } else {
+                return view('student.index');
+            }
         }
 
         return view('auth.register');
@@ -125,7 +88,7 @@ class AuthController extends Controller
 
     /**
      * Proses registrasi pengguna baru (default role: student).
-     * Setelah registrasi berhasil, pengguna otomatis ter-login.
+     * Setelah registrasi berhasil, pengguna otomatis ter-login dan ditampilkan view student/index.blade.php.
      */
     public function register(Request $request)
     {
@@ -154,8 +117,9 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('home')
-            ->with('success', 'Registrasi berhasil! Anda telah otomatis masuk sebagai Siswa (Student).');
+        session()->flash('success', 'Registrasi berhasil! Anda telah otomatis masuk sebagai Siswa (Student).');
+
+        return view('student.index');
     }
 
     /**
