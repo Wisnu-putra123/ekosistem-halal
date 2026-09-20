@@ -18,7 +18,7 @@
             <p class="text-sm text-slate-500 mt-1">Kelola informasi akun dan perbarui kata sandi Anda.</p>
         </div>
         <div>
-            <a href="{{ route('home') }}" class="inline-flex items-center space-x-2 border border-slate-300 text-slate-700 hover:bg-slate-50 px-3.5 py-2 rounded-lg text-xs font-semibold transition">
+            <a href="{{ url()->previous() }}"    class="inline-flex items-center space-x-2 border border-slate-300 text-slate-700 hover:bg-slate-50 px-3.5 py-2 rounded-lg text-xs font-semibold transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
